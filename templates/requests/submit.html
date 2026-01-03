@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Join Request - PG Assistant{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/search" class="hover:text-gray-200">Search PGs</a>
+      <a href="/dashboard" class="hover:text-gray-200">Dashboard</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <a href="/pg/{{ pg._id }}" class="text-blue-600 hover:underline mb-4 inline-block">← Back to PG Details</a>
+  
+  <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+    <h2 class="text-2xl font-bold mb-4">PG Information</h2>
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+      <h3 class="text-xl font-semibold mb-2">{{ pg.name }}</h3>
+      <p class="text-gray-600 mb-2">📍 {{ pg.address }}, {{ pg.city }}</p>
+      <p class="text-2xl font-bold text-blue-600">₹{{ pg.rent }}/month</p>
+      <p class="text-sm text-gray-500 mt-2">{{ pg.available_rooms }} room{{ 's' if pg.available_rooms != 1 else '' }} available</p>
+    </div>
+  </div>
+  
+  <div class="bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-2xl font-bold mb-6">Submit Join Request</h2>
+    
+    <form method="POST" class="space-y-6">
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Message to PG Owner (optional)</label>
+        <textarea name="message" rows="5" 
+                  placeholder="Tell the PG owner about yourself, your requirements, or any questions you have..."
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+        <p class="text-sm text-gray-500 mt-2">This message will be sent to the PG owner along with your request.</p>
+      </div>
+      
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p class="text-sm text-blue-800">
+          <strong>Note:</strong> After submitting your request, the PG owner will review it and respond. 
+          You can check the status of your request in your dashboard.
+        </p>
+      </div>
+      
+      <div class="flex space-x-4">
+        <button type="submit" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700">
+          Submit Request
+        </button>
+        <a href="/pg/{{ pg._id }}" class="bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-400">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

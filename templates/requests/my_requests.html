@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}My Join Requests - PG Assistant{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/search" class="hover:text-gray-200">Search PGs</a>
+      <a href="/dashboard" class="hover:text-gray-200">Dashboard</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-gray-800 mb-6">My Join Requests</h1>
+  
+  {% if requests %}
+    <div class="space-y-6">
+      {% for req in requests %}
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="text-xl font-bold mb-2">
+              {{ req.pg_details.name if req.pg_details else 'PG Listing' }}
+            </h3>
+            {% if req.pg_details %}
+            <p class="text-gray-600 mb-2">📍 {{ req.pg_details.address }}, {{ req.pg_details.city }}</p>
+            <p class="text-2xl font-bold text-blue-600 mb-2">₹{{ req.pg_details.rent }}/month</p>
+            {% endif %}
+          </div>
+          <span class="px-3 py-1 rounded-lg font-semibold
+            {% if req.status == 'approved' %}bg-green-200 text-green-800
+            {% elif req.status == 'rejected' %}bg-red-200 text-red-800
+            {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+            {{ req.status|title }}
+          </span>
+        </div>
+        
+        {% if req.message %}
+        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+          <p class="text-sm text-gray-600 font-semibold mb-1">Your Message:</p>
+          <p class="text-gray-700">{{ req.message }}</p>
+        </div>
+        {% endif %}
+        
+        {% if req.response_message %}
+        <div class="bg-blue-50 p-4 rounded-lg mb-4">
+          <p class="text-sm text-blue-600 font-semibold mb-1">Owner's Response:</p>
+          <p class="text-blue-800">{{ req.response_message }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-gray-500">
+            Submitted on: {{ req.created_at.strftime('%B %d, %Y') if req.created_at else 'N/A' }}
+          </p>
+          {% if req.pg_details %}
+          <a href="/pg/{{ req.pg_id }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            View PG Details
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+      <p class="text-gray-600 text-xl mb-4">You haven't submitted any join requests yet.</p>
+      <a href="/pg/search" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 inline-block">
+        Search PGs
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}My PG Listings - PG Assistant{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/create" class="hover:text-gray-200">Add PG</a>
+      <a href="/dashboard" class="hover:text-gray-200">Dashboard</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-4xl font-bold text-gray-800">My PG Listings</h1>
+    <a href="/pg/create" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">
+      + Add New PG
+    </a>
+  </div>
+  
+  {% if listings %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for listing in listings %}
+      <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="text-xl font-bold">{{ listing.name }}</h3>
+            <span class="px-2 py-1 rounded text-xs font-semibold
+              {% if listing.status == 'approved' %}bg-green-200 text-green-800
+              {% elif listing.status == 'rejected' %}bg-red-200 text-red-800
+              {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+              {{ listing.status|title }}
+            </span>
+          </div>
+          
+          <p class="text-gray-600 mb-2">📍 {{ listing.city }}, {{ listing.state }}</p>
+          <p class="text-2xl font-bold text-blue-600 mb-2">₹{{ listing.rent }}/month</p>
+          <p class="text-sm text-gray-500 mb-3">
+            {{ listing.available_rooms }} / {{ listing.total_rooms }} rooms available
+          </p>
+          
+          {% if listing.facilities %}
+          <div class="flex flex-wrap gap-2 mb-4">
+            {% for facility in listing.facilities[:4] %}
+            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ facility }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <div class="flex space-x-2">
+            <a href="/pg/{{ listing._id }}" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-center">
+              View
+            </a>
+            <a href="/pg/{{ listing._id }}/edit" class="flex-1 bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 text-center">
+              Edit
+            </a>
+            <form method="POST" action="/pg/{{ listing._id }}/delete" class="inline" 
+                  onsubmit="return confirm('Are you sure you want to delete this listing?');">
+              <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+      <p class="text-gray-600 text-xl mb-4">You haven't created any PG listings yet.</p>
+      <a href="/pg/create" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700 inline-block">
+        Create Your First PG Listing
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

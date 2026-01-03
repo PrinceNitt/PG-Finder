@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PG Assistant{% endblock %}
+
+{% block content %}
+  <!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/search" class="hover:text-gray-200">Search PGs</a>
+      {% if user_role == 'pg_owner' %}
+        <a href="/pg/my-listings" class="hover:text-gray-200">My Listings</a>
+        <a href="/pg/create" class="hover:text-gray-200">Add PG</a>
+        <a href="/requests/received" class="hover:text-gray-200">Requests</a>
+      {% elif user_role == 'admin' %}
+        <a href="/admin/dashboard" class="hover:text-gray-200">Admin</a>
+      {% else %}
+        <a href="/requests/my-requests" class="hover:text-gray-200">My Requests</a>
+      {% endif %}
+      <span class="text-yellow-200">Welcome, {{ name }}!</span>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-gray-800 mb-6">Dashboard</h1>
+  
+  {% if user_role == 'student' %}
+    <!-- Student Dashboard -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">My Join Requests</h2>
+      {% if requests %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">PG Name</th>
+                <th class="px-4 py-2 text-left">Location</th>
+                <th class="px-4 py-2 text-left">Rent</th>
+                <th class="px-4 py-2 text-left">Status</th>
+                <th class="px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in requests %}
+              <tr class="border-b">
+                <td class="px-4 py-2">{{ req.pg_details.name if req.pg_details else 'N/A' }}</td>
+                <td class="px-4 py-2">{{ req.pg_details.city if req.pg_details else 'N/A' }}</td>
+                <td class="px-4 py-2">₹{{ req.pg_details.rent if req.pg_details else 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="px-2 py-1 rounded text-sm
+                    {% if req.status == 'approved' %}bg-green-200 text-green-800
+                    {% elif req.status == 'rejected' %}bg-red-200 text-red-800
+                    {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+                    {{ req.status|title }}
+                  </span>
+                </td>
+                <td class="px-4 py-2">
+                  {% if req.pg_details %}
+                  <a href="/pg/{{ req.pg_id }}" class="text-blue-600 hover:underline">View PG</a>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-600">You haven't submitted any join requests yet.</p>
+        <a href="/pg/search" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Search PGs
+        </a>
+      {% endif %}
+        </div>
+
+  {% elif user_role == 'pg_owner' %}
+    <!-- PG Owner Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">My PG Listings</h2>
+        <p class="text-3xl font-bold text-blue-600 mb-2">{{ listings|length }}</p>
+        <a href="/pg/my-listings" class="text-blue-600 hover:underline">View All →</a>
+      </div>
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Pending Requests</h2>
+        <p class="text-3xl font-bold text-yellow-600 mb-2">
+          {{ received_requests|selectattr('status', 'equalto', 'pending')|list|length }}
+        </p>
+        <a href="/requests/received" class="text-blue-600 hover:underline">View All →</a>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Recent Join Requests</h2>
+      {% if received_requests %}
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">PG Name</th>
+                <th class="px-4 py-2 text-left">Student</th>
+                <th class="px-4 py-2 text-left">Status</th>
+                <th class="px-4 py-2 text-left">Date</th>
+                <th class="px-4 py-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for req in received_requests[:5] %}
+              <tr class="border-b">
+                <td class="px-4 py-2">{{ req.pg_details.name if req.pg_details else 'N/A' }}</td>
+                <td class="px-4 py-2">{{ req.student_details.name if req.student_details else 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <span class="px-2 py-1 rounded text-sm
+                    {% if req.status == 'approved' %}bg-green-200 text-green-800
+                    {% elif req.status == 'rejected' %}bg-red-200 text-red-800
+                    {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+                    {{ req.status|title }}
+                  </span>
+                </td>
+                <td class="px-4 py-2">{{ req.created_at.strftime('%Y-%m-%d') if req.created_at else 'N/A' }}</td>
+                <td class="px-4 py-2">
+                  <a href="/requests/received" class="text-blue-600 hover:underline">View</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-600">No join requests received yet.</p>
+      {% endif %}
+  </div>
+
+    <div class="bg-blue-50 rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-2">Quick Actions</h3>
+      <div class="space-x-4">
+        <a href="/pg/create" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block">
+          Add New PG Listing
+        </a>
+        <a href="/pg/my-listings" class="bg-white text-blue-600 px-4 py-2 rounded border border-blue-600 hover:bg-blue-50 inline-block">
+          Manage Listings
+        </a>
+      </div>
+      </div>
+    {% endif %}
+</div>
+{% endblock %}

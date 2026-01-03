@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}All PG Listings - Admin{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/admin/dashboard" class="hover:text-gray-200">Admin Dashboard</a>
+      <a href="/admin/listings" class="hover:text-gray-200">All Listings</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-4xl font-bold text-gray-800">All PG Listings</h1>
+    <div class="flex space-x-2">
+      <a href="/admin/listings?status=all" 
+         class="px-4 py-2 rounded {% if status == 'all' %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">
+        All
+      </a>
+      <a href="/admin/listings?status=pending" 
+         class="px-4 py-2 rounded {% if status == 'pending' %}bg-yellow-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">
+        Pending
+      </a>
+      <a href="/admin/listings?status=approved" 
+         class="px-4 py-2 rounded {% if status == 'approved' %}bg-green-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">
+        Approved
+      </a>
+      <a href="/admin/listings?status=rejected" 
+         class="px-4 py-2 rounded {% if status == 'rejected' %}bg-red-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">
+        Rejected
+      </a>
+    </div>
+  </div>
+  
+  {% if listings %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white rounded-lg shadow-lg">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">PG Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Location</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rent</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Rooms</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Owner</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          {% for listing in listings %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{ listing.name }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">{{ listing.city }}, {{ listing.state }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-semibold text-blue-600">₹{{ listing.rent }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">{{ listing.available_rooms }}/{{ listing.total_rooms }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">
+                {{ listing.owner_details.name if listing.owner_details else 'N/A' }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full
+                {% if listing.status == 'approved' %}bg-green-200 text-green-800
+                {% elif listing.status == 'rejected' %}bg-red-200 text-red-800
+                {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+                {{ listing.status|title }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <a href="/admin/listings/{{ listing._id }}/view" class="text-blue-600 hover:text-blue-900 mr-3">
+                View
+              </a>
+              {% if listing.status == 'pending' %}
+              <form method="POST" action="/admin/listings/{{ listing._id }}/approve" class="inline mr-2">
+                <button type="submit" class="text-green-600 hover:text-green-900">Approve</button>
+              </form>
+              <form method="POST" action="/admin/listings/{{ listing._id }}/reject" class="inline">
+                <button type="submit" class="text-red-600 hover:text-red-900">Reject</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="bg-white rounded-lg shadow-lg p-12 text-center">
+      <p class="text-gray-600 text-xl">No listings found.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

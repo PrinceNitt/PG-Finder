@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Add PG Listing - PG Assistant{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/my-listings" class="hover:text-gray-200">My Listings</a>
+      <a href="/dashboard" class="hover:text-gray-200">Dashboard</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <h1 class="text-4xl font-bold text-gray-800 mb-6">Add New PG Listing</h1>
+  
+  <div class="bg-white rounded-lg shadow-lg p-8">
+    <form method="POST" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">PG Name *</label>
+          <input type="text" name="name" required 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">City *</label>
+          <input type="text" name="city" required 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Full Address *</label>
+        <textarea name="address" rows="2" required 
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">State</label>
+          <input type="text" name="state" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Pincode</label>
+          <input type="text" name="pincode" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Monthly Rent (₹) *</label>
+          <input type="number" name="rent" step="0.01" required 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Security Deposit (₹)</label>
+          <input type="number" name="deposit" step="0.01" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Total Rooms *</label>
+          <input type="number" name="total_rooms" required 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Available Rooms *</label>
+        <input type="number" name="available_rooms" required 
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Facilities</label>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {% for facility in common_facilities %}
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" name="facilities" value="{{ facility }}" 
+                   class="rounded border-gray-300">
+            <span>{{ facility }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Description</label>
+        <textarea name="description" rows="4" 
+                  class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Contact Phone</label>
+          <input type="tel" name="contact_phone" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Contact Email</label>
+          <input type="email" name="contact_email" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Nearby Colleges (comma-separated)</label>
+        <input type="text" name="nearby_colleges" placeholder="e.g., ABC College, XYZ University" 
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <div>
+        <label class="block text-gray-700 font-semibold mb-2">Nearby Workplaces (comma-separated)</label>
+        <input type="text" name="nearby_workplaces" placeholder="e.g., Tech Park, Business District" 
+               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Latitude (optional)</label>
+          <input type="number" name="latitude" step="any" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">Longitude (optional)</label>
+          <input type="number" name="longitude" step="any" 
+                 class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      
+      <div class="flex space-x-4">
+        <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-700">
+          Submit for Review
+        </button>
+        <a href="/pg/my-listings" class="bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-400">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

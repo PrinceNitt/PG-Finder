@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PGFinder{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="fixed top-4 right-4 z-50 space-y-2" id="flash-messages">
+                {% for category, message in messages %}
+                    <div class="px-6 py-3 rounded-lg shadow-lg text-white min-w-[300px] animate-slide-in
+                        {% if category == 'success' %}bg-green-500
+                        {% elif category == 'danger' or category == 'error' %}bg-red-500
+                        {% elif category == 'warning' %}bg-yellow-500
+                        {% elif category == 'info' %}bg-blue-500
+                        {% else %}bg-gray-500{% endif %}" 
+                        onclick="this.remove()" style="cursor: pointer;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            <script>
+                // Auto-remove flash messages after 5 seconds
+                setTimeout(function() {
+                    const messages = document.getElementById('flash-messages');
+                    if (messages) {
+                        messages.style.opacity = '0';
+                        messages.style.transition = 'opacity 0.5s';
+                        setTimeout(() => messages.remove(), 500);
+                    }
+                }, 5000);
+            </script>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

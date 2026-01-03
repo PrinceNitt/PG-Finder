@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}PG Assistant - Find Your Perfect Paying Guest Accommodation{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/pg/search" class="hover:text-gray-200">Search PGs</a>
+      {% if user_logged_in %}
+        {% if user_role == 'pg_owner' %}
+          <a href="/pg/my-listings" class="hover:text-gray-200">My Listings</a>
+          <a href="/pg/create" class="hover:text-gray-200">Add PG</a>
+        {% elif user_role == 'admin' %}
+          <a href="/admin/dashboard" class="hover:text-gray-200">Admin</a>
+        {% else %}
+          <a href="/requests/my-requests" class="hover:text-gray-200">My Requests</a>
+        {% endif %}
+        <a href="/dashboard" class="hover:text-gray-200">Dashboard</a>
+        <span class="text-yellow-200">Welcome, {{ user_name }}!</span>
+        <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+      {% else %}
+        <a href="/login" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded">Login</a>
+        <a href="/signup" class="bg-yellow-400 text-black hover:bg-yellow-300 px-3 py-1 rounded">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+  <div class="container mx-auto px-4 text-center">
+    <h1 class="text-5xl font-bold mb-4">Find Your Perfect PG Accommodation</h1>
+    <p class="text-xl mb-8">Search, compare, and book verified Paying Guest accommodations near colleges and workplaces</p>
+    <a href="/pg/search" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-bold text-lg hover:bg-gray-100 inline-block">
+      Search PGs Now
+    </a>
+  </div>
+</section>
+
+<!-- Search Bar -->
+<section class="container mx-auto px-4 -mt-10 mb-12">
+  <div class="bg-white rounded-lg shadow-xl p-6">
+    <form action="/pg/search" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <input type="text" name="city" placeholder="Enter city" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      <input type="number" name="min_rent" placeholder="Min Rent (₹)" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      <input type="number" name="max_rent" placeholder="Max Rent (₹)" class="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+      <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700">
+        Search
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="container mx-auto px-4 py-12">
+  <h2 class="text-3xl font-bold text-center mb-8">Why Choose PG Assistant?</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+      <div class="text-4xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold mb-2">Easy Search</h3>
+      <p class="text-gray-600">Search PGs by location, rent, facilities, and distance from colleges/workplaces</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+      <div class="text-4xl mb-4">✅</div>
+      <h3 class="text-xl font-bold mb-2">Verified Listings</h3>
+      <p class="text-gray-600">All PG listings are verified by administrators for authenticity and reliability</p>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+      <div class="text-4xl mb-4">💬</div>
+      <h3 class="text-xl font-bold mb-2">Direct Communication</h3>
+      <p class="text-gray-600">Submit join requests and communicate directly with PG owners</p>
+    </div>
+  </div>
+</section>
+
+<!-- Featured PGs -->
+{% if featured_pgs %}
+<section class="container mx-auto px-4 py-12 bg-gray-50">
+  <h2 class="text-3xl font-bold text-center mb-8">Featured PG Accommodations</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for pg in featured_pgs %}
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+      <div class="p-6">
+        <h3 class="text-xl font-bold mb-2">{{ pg.name }}</h3>
+        <p class="text-gray-600 mb-2">📍 {{ pg.city }}, {{ pg.state }}</p>
+        <p class="text-2xl font-bold text-blue-600 mb-2">₹{{ pg.rent }}/month</p>
+        <p class="text-sm text-gray-500 mb-3">{{ pg.available_rooms }} rooms available</p>
+        <div class="flex flex-wrap gap-2 mb-4">
+          {% for facility in pg.facilities[:3] %}
+          <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">{{ facility }}</span>
+          {% endfor %}
+        </div>
+        <a href="/pg/{{ pg._id }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block">
+          View Details
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-8">
+    <a href="/pg/search" class="text-blue-600 hover:underline font-semibold">View All PGs →</a>
+  </div>
+</section>
+{% endif %}
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-8 mt-12">
+  <div class="container mx-auto px-4 text-center">
+    <p>&copy; 2025 PG Assistant System. All rights reserved.</p>
+    <p class="mt-2 text-gray-400">Find your perfect accommodation today!</p>
+  </div>
+</footer>
+{% endblock %}

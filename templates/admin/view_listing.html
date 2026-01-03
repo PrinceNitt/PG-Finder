@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pg.name }} - Admin View{% endblock %}
+
+{% block content %}
+<!-- Navbar -->
+<nav class="bg-blue-600 text-white px-6 py-4 shadow-lg">
+  <div class="container mx-auto flex justify-between items-center">
+    <div class="text-2xl font-bold">PG Assistant</div>
+    <div class="space-x-4">
+      <a href="/" class="hover:text-gray-200">Home</a>
+      <a href="/admin/dashboard" class="hover:text-gray-200">Admin Dashboard</a>
+      <a href="/admin/listings" class="hover:text-gray-200">All Listings</a>
+      <a href="/logout" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">Logout</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 py-8">
+  <a href="/admin/listings" class="text-blue-600 hover:underline mb-4 inline-block">← Back to All Listings</a>
+  
+  <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+    <div class="flex justify-between items-start mb-6">
+      <div>
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">{{ pg.name }}</h1>
+        <p class="text-gray-600 text-lg">📍 {{ pg.address }}, {{ pg.city }}, {{ pg.state }} - {{ pg.pincode }}</p>
+      </div>
+      <div class="text-right">
+        <span class="px-3 py-1 rounded-lg font-semibold
+          {% if pg.status == 'approved' %}bg-green-200 text-green-800
+          {% elif pg.status == 'rejected' %}bg-red-200 text-red-800
+          {% else %}bg-yellow-200 text-yellow-800{% endif %}">
+          {{ pg.status|title }}
+        </span>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-600">Monthly Rent</p>
+        <p class="text-2xl font-bold text-blue-600">₹{{ pg.rent }}</p>
+      </div>
+      <div class="bg-green-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-600">Available Rooms</p>
+        <p class="text-2xl font-bold text-green-600">{{ pg.available_rooms }} / {{ pg.total_rooms }}</p>
+      </div>
+      <div class="bg-yellow-50 p-4 rounded-lg">
+        <p class="text-sm text-gray-600">Security Deposit</p>
+        <p class="text-2xl font-bold text-yellow-600">₹{{ pg.deposit }}</p>
+      </div>
+    </div>
+    
+    {% if pg.description %}
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-3">Description</h2>
+      <p class="text-gray-700 leading-relaxed">{{ pg.description }}</p>
+    </div>
+    {% endif %}
+    
+    {% if pg.facilities %}
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-3">Facilities</h2>
+      <div class="flex flex-wrap gap-2">
+        {% for facility in pg.facilities %}
+        <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-semibold">{{ facility }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if pg.nearby_colleges %}
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-3">Nearby Colleges</h2>
+      <ul class="list-disc list-inside text-gray-700">
+        {% for college in pg.nearby_colleges %}
+        <li>{{ college }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    
+    {% if pg.nearby_workplaces %}
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-3">Nearby Workplaces</h2>
+      <ul class="list-disc list-inside text-gray-700">
+        {% for workplace in pg.nearby_workplaces %}
+        <li>{{ workplace }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    
+    <div class="border-t pt-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-3">Contact Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% if pg.contact_phone %}
+        <div>
+          <p class="text-sm text-gray-600">Phone</p>
+          <p class="text-lg font-semibold">{{ pg.contact_phone }}</p>
+        </div>
+        {% endif %}
+        {% if pg.contact_email %}
+        <div>
+          <p class="text-sm text-gray-600">Email</p>
+          <p class="text-lg font-semibold">{{ pg.contact_email }}</p>
+        </div>
+        {% endif %}
+        {% if owner %}
+        <div>
+          <p class="text-sm text-gray-600">Owner</p>
+          <p class="text-lg font-semibold">{{ owner.name }}</p>
+          <p class="text-sm text-gray-500">{{ owner.email }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    {% if pg.status == 'pending' %}
+    <div class="border-t pt-6">
+      <h2 class="text-2xl font-semibold mb-4">Admin Actions</h2>
+      <div class="flex space-x-4">
+        <form method="POST" action="/admin/listings/{{ pg._id }}/approve" class="inline">
+          <button type="submit" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700">
+            Approve Listing
+          </button>
+        </form>
+        <form method="POST" action="/admin/listings/{{ pg._id }}/reject" class="inline">
+          <div class="flex space-x-2">
+            <input type="text" name="reason" placeholder="Rejection reason (optional)" 
+                   class="border rounded px-4 py-3">
+            <button type="submit" class="bg-red-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-red-700">
+              Reject Listing
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
