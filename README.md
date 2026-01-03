@@ -44,7 +44,7 @@ pip install -r requirements.txt
    Create a `.env` file in the root directory:
 ```env
    SECRET_KEY=your-secret-key-here
-   MONGO_URI=mongodb://localhost:27017/
+   MONGO_URI=mongodb
    DATABASE_NAME=pgfinder_db
 DEBUG=True
    PORT=8000
