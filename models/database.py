@@ -3,6 +3,7 @@ Database connection and management module.
 Handles MongoDB connection with proper error handling and retries.
 """
 import logging
+import os
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 from config import Config
