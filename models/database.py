@@ -46,28 +46,31 @@ def get_client():
     global _client
     if _client is None:
         try:
-            # Handle SSL certificate issues for MongoDB Atlas on macOS
+            # Handle SSL certificate issues using certifi
+            import certifi
+            
             client_options = {
-                'serverSelectionTimeoutMS': 10000,  # 10 second timeout
+                'serverSelectionTimeoutMS': 10000,
                 'connectTimeoutMS': 20000,
                 'socketTimeoutMS': 30000,
-                'retryWrites': True
+                'retryWrites': True,
+                'tls': True,
+                'tlsCAFile': certifi.where()  # Explicitly use certifi CA bundle
             }
             
-            # For MongoDB Atlas connections, handle SSL certificate verification
-            if 'mongodb+srv' in Config.MONGO_URI or 'mongodb.net' in Config.MONGO_URI:
-                # Fix SSL certificate verification error on macOS
-                # This allows connection even if certificate verification fails
-                # WARNING: Only for development, use proper certificates in production
-                client_options['tlsAllowInvalidCertificates'] = True
+            logger.info(f"Connecting to MongoDB using certifi at: {certifi.where()}")
             
             _client = MongoClient(Config.MONGO_URI, **client_options)
+            
             # Test the connection
             _client.admin.command('ping')
             logger.info("Successfully connected to MongoDB")
         except (ConnectionFailure, ServerSelectionTimeoutError) as e:
             logger.error(f"Failed to connect to MongoDB: {e}")
             raise ConnectionFailure(f"Unable to connect to MongoDB: {e}")
+        except ImportError:
+            logger.error("certifi module not found. Please add certifi to requirements.txt")
+            raise
     return _client
 
 
