@@ -62,6 +62,26 @@ HOST=127.0.0.1
 6. **Access the application**
    Open your browser and navigate to `http://127.0.0.1:8000`
 
+## Deployment
+
+### Deploy to Render (Recommended)
+
+This project is configured for deployment on Render.
+
+1.  **Push to GitHub**: Ensure your code is in a GitHub repository.
+2.  **Sign up on Render**: Go to [render.com](https://render.com) and create an account.
+3.  **New Web Service**:
+    *   Click "New +" and select "Web Service".
+    *   Connect your GitHub repository.
+    *   Render will automatically detect the configuration from `render.yaml`.
+    *   Add your environment variables (MONGO_URI, SECRET_KEY) in the Render dashboard.
+4.  **Deploy**: Click "Create Web Service".
+
+### Configuration Files
+- `Procfile`: Used by Render/Heroku to start the app (`gunicorn app:app`).
+- `render.yaml`: Infrastructure configuration for Render.
+
+
 ## User Roles
 
 ### Student
