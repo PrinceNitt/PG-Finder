@@ -50,7 +50,8 @@ def signup():
             return render_template('signup.html', name=name, email=email, role=role)
         except Exception as e:
             logger.error(f"Signup error: {e}")
-            flash('An error occurred. Please try again.', 'danger')
+            # expose error for debugging
+            flash(f'An error occurred: {str(e)}', 'danger')
             return render_template('signup.html', name=name, email=email, role=role)
     
     return render_template('signup.html')
