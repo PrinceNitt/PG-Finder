@@ -55,8 +55,16 @@ def get_client():
                 'socketTimeoutMS': 30000,
                 'retryWrites': True,
                 'tls': True,
-                'tlsCAFile': certifi.where()  # Explicitly use certifi CA bundle
+                'tlsCAFile': certifi.where(),  # Explicitly use certifi CA bundle
+                'connect': False  # Lazy connection to handle Gunicorn forking safely
             }
+            
+            # Allow disabling SSL verification via environment variable (Escape hatch for Render)
+            if os.getenv('MONGO_TLS_DISABLE', 'false').lower() == 'true':
+                logger.warning("MongoDB TLS verification disabled by environment variable.")
+                client_options['tlsAllowInvalidCertificates'] = True
+                # When disabling verification, we might need to relax hostname check too
+                client_options['tlsAllowInvalidHostnames'] = True
             
             logger.info(f"Connecting to MongoDB using certifi at: {certifi.where()}")
             
